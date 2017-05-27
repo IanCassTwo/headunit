@@ -260,8 +260,8 @@ VideoOutput::VideoOutput(DesktopEventCallbacks* callbacks) : callbacks(callbacks
         #if ASPECT_RATIO_FIX
                                  "videocrop top=16 bottom=15 ! "
         #endif
-                                 "videoscale name=myconvert ! "
-                                 "videoconvert ! "
+//                                 "videoscale name=myconvert ! "
+//                                 "videoconvert ! "
                                  "xvimagesink name=mysink";
     vid_pipeline = gst_parse_launch(vid_launch_str, &error);
 
