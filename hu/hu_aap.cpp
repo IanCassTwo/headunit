@@ -411,13 +411,13 @@
       logd ("Service Discovery Request: %s", request.phone_name().c_str());                               // S 0 CTR b src: HU  lft:   113  msg_type:     6 Service Discovery Response    S 0 CTR b 00000000 0a 08 08 01 12 04 0a 02 08 0b 0a 13 08 02 1a 0f
 
     HU::ServiceDiscoveryResponse carInfo;
-    carInfo.set_head_unit_name("Mazda Connect");
-    carInfo.set_car_model("Mazda");
-    carInfo.set_car_year("2016");
+    carInfo.set_head_unit_name("Subaru Navigation");
+    carInfo.set_car_model("Subaru");
+    carInfo.set_car_year("2004");
     carInfo.set_car_serial("0001");
     carInfo.set_driver_pos(true);
-    carInfo.set_headunit_make("Mazda");
-    carInfo.set_headunit_model("Connect");
+    carInfo.set_headunit_make("Haoyu");
+    carInfo.set_headunit_model("Marsboard");
     carInfo.set_sw_build("SWB1");
     carInfo.set_sw_version("SWV1");
     carInfo.set_can_play_native_media_during_vr(false);
