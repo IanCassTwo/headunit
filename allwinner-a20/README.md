@@ -76,6 +76,16 @@ Install VDPAU packages
 apt-get install libvdpau-dev libvdpau1 vdpau-va-driver vdpauinfo
 ````
 
+Compile libcedrus
+
+````
+git clone https://github.com/linux-sunxi/libcedrus
+cd libcedrus
+make
+make install
+cd ..
+````
+
 Compile VDPAU driver for CedarX VPU
 
 ````
@@ -86,11 +96,15 @@ make install
 cd ..
 ````
 
-Verify that VDPA system is working. You may have to run this using sudo
+Verify that VDPA system is working. You may have to run this using sudo. You may also have to play with symlinks to verify VDPAU driver is installed in correct place for your distro.
 
 ````
 export VDPAU_DRIVER=sunxi
 vdpauinfo
+````
+
+Should get output similar to this:
+
 ````
 [VDPAU SUNXI] VE version 0x1623 opened.
 API version: 1
