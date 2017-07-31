@@ -1,6 +1,6 @@
 TOP = $(realpath ..)
 
-INCLUDES=$(shell pkg-config --cflags gstreamer-1.0 gstreamer-app-1.0 gstreamer-video-1.0 gstreamer-app-1.0 gstreamer-audio-1.0 gstreamer-codecparsers-1.0 libcrypto libusb-1.0 openssl glib-2.0 gtk+-3.0 x11 protobuf sdl2 libunwind libudev alsa) -I$(TOP)/hu -I$(TOP)/common -I$(TOP)/hu/generated.x64 -I/usr/local/include/libusb-1.0/
+INCLUDES=$(shell pkg-config --cflags gstreamer-1.0 gstreamer-app-1.0 gstreamer-video-1.0 gstreamer-app-1.0 gstreamer-audio-1.0 gstreamer-codecparsers-1.0 libcrypto libusb-1.0 openssl glib-2.0 gtk+-3.0 x11 protobuf sdl2 libunwind libudev alsa) -I$(TOP)/hu -I$(TOP)/common -I$(TOP)/hu/generated.x64 -I/usr/local/include/libusb-1.0/ -Igps/nematode/include
 CFLAGS= -g -rdynamic -pthread
 LFLAGS= -g -rdynamic -pthread -ldl $(shell pkg-config --libs gstreamer-1.0 gstreamer-app-1.0 gstreamer-video-1.0 gstreamer-app-1.0 gstreamer-audio-1.0 gstreamer-codecparsers-1.0 libcrypto libusb-1.0 openssl glib-2.0 gtk+-3.0 x11 protobuf sdl2 libunwind libudev alsa)
 CXXFLAGS= $(CFLAGS) -std=c++11 -Wno-narrowing
@@ -17,6 +17,13 @@ SRCS += $(TOP)/common/audio.cpp
 SRCS += $(TOP)/common/glib_utils.cpp
 SRCS += $(TOP)/common/command_server.cpp
 SRCS += $(TOP)/common/web++/web++.cpp
+
+SRCS += gps/nematode/src/GPSFix.cpp
+SRCS += gps/nematode/src/GPSService.cpp
+SRCS += gps/nematode/src/NMEACommand.cpp
+SRCS += gps/nematode/src/NMEAParser.cpp
+SRCS += gps/nematode/src/NumberConversion.cpp
+SRCS += gps/gps.cpp
 
 SRCS += bt/ub_bluetooth.cpp
 SRCS += main.cpp

@@ -10,6 +10,8 @@
 #include "hu_uti.h"
 #include "hu_aap.h"
 
+#include "gps/gps.h"
+
 #include "main.h"
 #include "outputs.h"
 #include "callbacks.h"
@@ -39,6 +41,35 @@ gst_loop(gst_app_t *app) {
         g_main_loop_run(app->loop);
 
         return ret;
+}
+
+void gps_location_handler(uint64_t timestamp, double lat, double lng, double bearing, double speed, double alt, double accuracy) {
+        logd("[LOC][%" PRIu64 "] - Lat: %f Lng: %f Brng: %f Spd: %f Alt: %f Acc: %f \n",
+                        timestamp, lat, lng, bearing, speed, alt, accuracy);
+
+        g_hu->hu_queue_command([timestamp, lat, lng, bearing, speed, alt, accuracy](IHUConnectionThreadInterface& s)
+        {
+                HU::SensorEvent sensorEvent;
+                HU::SensorEvent::LocationData* location = sensorEvent.add_location_data();
+                location->set_timestamp(timestamp);
+                location->set_latitude(static_cast<int32_t>(lat * 1E7));
+                location->set_longitude(static_cast<int32_t>(lng * 1E7));
+
+                if (bearing != 0) {
+                        location->set_bearing(static_cast<int32_t>(bearing * 1E6));
+                }
+
+                // AA expects speed in knots, so convert back
+                location->set_speed(static_cast<int32_t>((speed / 1.852) * 1E3));
+
+                if (alt != 0) {
+                        location->set_altitude(static_cast<int32_t>(alt * 1E2));
+                }
+
+                location->set_accuracy(static_cast<int32_t>(accuracy * 1E3));
+
+                s.hu_aap_enc_send_message(0, AA_CH_SEN, HU_SENSOR_CHANNEL_MESSAGE::SensorEvent, sensorEvent);
+        });
 }
 
 
@@ -80,7 +111,7 @@ main(int argc, char *argv[]) {
             loge("Command server failed to start");
         }
 
-        //loop to emulate the caar
+        //loop to emulate the car
         while(true)
         {
             DesktopEventCallbacks callbacks;
@@ -98,7 +129,10 @@ main(int argc, char *argv[]) {
             g_hu = &headunit.GetAnyThreadInterface();
             commandCallbacks.eventCallbacks = &callbacks;
 
-              /* Start gstreamer pipeline and main loop */
+            // GPS processing
+            gps_start(&gps_location_handler);
+
+            /* Start gstreamer pipeline and main loop */
             ret = gst_loop(app);
             if (ret < 0) {
                     printf("STATUS:gst_loop() ret: %d\n", ret);
@@ -106,6 +140,9 @@ main(int argc, char *argv[]) {
 
             callbacks.connected = false;
             commandCallbacks.eventCallbacks = nullptr;
+
+            printf("waiting for gps_thread\n");
+            gps_stop();
 
             /* Stop AA processing */
             ret = headunit.hu_aap_shutdown();
